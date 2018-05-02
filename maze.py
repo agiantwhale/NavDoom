@@ -107,9 +107,18 @@ class Maze:
 if __name__ == '__main__':
     FLAGS = parser.parse_args()
 
+    counter = 0
     mazes = set()
     while len(mazes) < FLAGS.num:
-        mazes.add(Maze.create_maze(FLAGS.columns + 1, FLAGS.rows + 1))
+        if counter > 5:
+            break
+
+        maze = Maze.create_maze(FLAGS.columns + 1, FLAGS.rows + 1)
+        if maze in mazes:
+            counter += 1
+        else:
+            counter = 0
+            mazes.add(maze)
 
     for idx, maze in enumerate(mazes):
-        maze.write_to_file("{}_{}.txt".format(FLAGS.maze, idx))
+        maze.write_to_file("{}_MAP{:02d}.txt".format(FLAGS.maze, idx))

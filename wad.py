@@ -1,8 +1,9 @@
+import re
 from omg import *
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('maze')
+parser.add_argument('prefix')
 parser.add_argument('wad')
 parser.add_argument('-b', '--behavior', default=False)
 parser.add_argument('-s', '--script', default=False)
@@ -94,22 +95,28 @@ def build_wall(maze):
 
 def main(flags):
     new_wad = WAD()
-    new_map = MapEditor()
-    new_map.Linedef = ZLinedef
-    new_map.Thing = ZThing
-    new_map.behavior = Lump(from_file=flags.behavior or None)
-    new_map.scripts = Lump(from_file=flags.script or None)
-    with open(flags.maze) as maze_source:
-        maze = [line.strip() for line in maze_source.readlines()]
-        maze = [line for line in maze if line]
-    things, vertexes, linedefs = build_wall(maze)
-    new_map.things = things + [ZThing(0, 0, 0, 0, 0, 1, 7)]
-    new_map.vertexes = vertexes
-    new_map.linedefs = linedefs
-    new_map.sectors = [Sector(0, 128, 'CEIL5_2', 'CEIL5_2', 240, 0, 0)]
-    new_map.sidedefs = [Sidedef(0, 0, '-', '-', 'STONE2', 0),
-                        Sidedef(0, 0, '-', '-', '-', 0)]
-    new_wad.maps['MAP01'] = new_map.to_lumps()
+
+    for file_name in sorted(glob.glob('{}_*.txt'.format(flags.prefix))):
+        map_name = re.match('{}_(.*).txt'.format(flags.prefix), file_name)[1]
+
+        with open(file_name) as maze_source:
+            maze = [line.strip() for line in maze_source.readlines()]
+            maze = [line for line in maze if line]
+
+        new_map = MapEditor()
+        new_map.Linedef = ZLinedef
+        new_map.Thing = ZThing
+        new_map.behavior = Lump(from_file=flags.behavior or None)
+        new_map.scripts = Lump(from_file=flags.script or None)
+        things, vertexes, linedefs = build_wall(maze)
+        new_map.things = things + [ZThing(0, 0, 0, 0, 0, 1, 7)]
+        new_map.vertexes = vertexes
+        new_map.linedefs = linedefs
+        new_map.sectors = [Sector(0, 128, 'CEIL5_2', 'CEIL5_2', 240, 0, 0)]
+        new_map.sidedefs = [Sidedef(0, 0, '-', '-', 'STONE2', 0),
+                            Sidedef(0, 0, '-', '-', '-', 0)]
+        new_wad.maps[map_name] = new_map.to_lumps()
+
     new_wad.to_file(flags.wad)
 
 
