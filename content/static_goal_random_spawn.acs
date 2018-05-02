@@ -1,0 +1,55 @@
+#include "zcommon.acs"
+
+#define TARGET_ID_START 1000 
+#define GOAL_TID 999
+
+global int 0:reward;
+
+int TARGET_ID_END = TARGET_ID_START;
+int SPAWN_LOC_ID = 0;
+int GOAL_LOC_ID = 0;
+
+function int fdistance (int tid1, int tid2)
+{
+	int len;
+	int y = getactory(tid1) - getactory(tid2);
+	int x = getactorx(tid1) - getactorx(tid2);
+	int z = getactorz(tid1) - getactorz(tid2);
+
+	int ang = vectorangle(x,y);
+	if(((ang+0.125)%0.5) > 0.25) len = fixeddiv(y, sin(ang));
+	else len = fixeddiv(x, cos(ang));
+
+	ang = vectorangle(len, z);
+	if(((ang+0.125)%0.5) > 0.25) len = fixeddiv(z, sin(ang));
+	else len = fixeddiv(len, cos(ang));
+
+	return len;
+}
+
+script 1 ENTER
+{
+	if(TARGET_ID_END == TARGET_ID_START)
+	{
+		while(IsTIDUsed(TARGET_ID_END + 1)) TARGET_ID_END += 1;
+	}
+
+	// Spawn actor
+	SPAWN_LOC_ID = random(TARGET_ID_START, TARGET_ID_END);
+	SetActorPosition(0, GetActorX(SPAWN_LOC_ID), GetActorY(SPAWN_LOC_ID), 0.0, 0);
+	SetActorAngle(0,random(0.0,1.0));
+
+	// Spawn goals
+	GOAL_LOC_ID = SPAWN_LOC_ID;
+	while(GOAL_LOC_ID==SPAWN_LOC_ID) GOAL_LOC_ID = random(TARGET_ID_START, TARGET_ID_END);
+	if(IsTIDUsed(GOAL_TID)==FALSE) 
+	{
+		while(Spawn("TallRedColumn", GetActorX(GOAL_LOC_ID), GetActorY(GOAL_LOC_ID), 20.0, GOAL_TID)==0);
+	}
+
+	// Wait
+	while(fdistance(0, GOAL_TID) > 64.0) Delay(1);
+
+	reward += 10.0;
+	restart;
+}
