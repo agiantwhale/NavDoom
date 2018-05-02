@@ -38,6 +38,7 @@ script 1 ENTER
 	SPAWN_LOC_ID = random(TARGET_ID_START, TARGET_ID_END);
 	SetActorPosition(0, GetActorX(SPAWN_LOC_ID), GetActorY(SPAWN_LOC_ID), 0.0, 0);
 	SetActorAngle(0,random(0.0,1.0));
+	SetActorVelocity(0, 0, 0, 0, FALSE, FALSE);
 
 	// Spawn goals
 	GOAL_LOC_ID = SPAWN_LOC_ID;

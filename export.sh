@@ -13,6 +13,6 @@ echo "Generated mazes."
 
 shopt -s nullglob
 for NAME in outputs/*.txt; do
-	python wad.py $NAME "outputs/$(basename $NAME).wad" -b content/static_goal_random_spawn.o
+	python wad.py $NAME "outputs/$(basename $NAME .txt).wad" -b content/static_goal_random_spawn.o
 done
 echo "Converted to WADs."
