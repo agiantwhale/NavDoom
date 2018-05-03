@@ -121,4 +121,4 @@ if __name__ == '__main__':
             mazes.add(maze)
 
     for idx, maze in enumerate(mazes):
-        maze.write_to_file("{}_MAP{:02d}.txt".format(FLAGS.maze, idx))
+        maze.write_to_file("{}_MAP{:02d}.txt".format(FLAGS.maze, idx + 1))
