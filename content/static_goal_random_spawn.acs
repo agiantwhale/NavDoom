@@ -4,6 +4,9 @@
 #define GOAL_TID 999
 
 global int 0:reward;
+global int 1:goal_x;
+global int 2:goal_y;
+global int 3:goal_z;
 
 int TARGET_ID_END = TARGET_ID_START;
 int SPAWN_LOC_ID = 0;
@@ -46,6 +49,9 @@ script 1 ENTER
 	if(IsTIDUsed(GOAL_TID)==FALSE) 
 	{
 		while(Spawn("TallRedColumn", GetActorX(GOAL_LOC_ID), GetActorY(GOAL_LOC_ID), 20.0, GOAL_TID)==0);
+		goal_x = GetActorX(GOAL_LOC_ID);
+		goal_y = GetActorY(GOAL_LOC_ID);
+		goal_z = GetActorZ(GOAL_LOC_ID);
 	}
 
 	// Wait
