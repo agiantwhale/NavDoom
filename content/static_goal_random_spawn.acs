@@ -1,6 +1,8 @@
 #include "zcommon.acs"
 
 #define TARGET_ID_START 1000 
+#define REWARD_ID_SHIFT 1000 
+#define REWARD_CHANCE 0.5
 #define GOAL_TID 999
 
 global int 0:reward;
@@ -32,10 +34,13 @@ function int fdistance (int tid1, int tid2)
 
 script 1 ENTER
 {
-	if(TARGET_ID_END == TARGET_ID_START)
+	TARGET_ID_END = TARGET_ID_START;
+	while(IsTIDUsed(TARGET_ID_END + 1))
 	{
-		while(IsTIDUsed(TARGET_ID_END + 1)) TARGET_ID_END += 1;
+		TARGET_ID_END += 1;
+		Delay(1);
 	}
+	print(s: "End loc found");
 
 	// Spawn actor
 	SPAWN_LOC_ID = random(TARGET_ID_START, TARGET_ID_END);
@@ -45,18 +50,61 @@ script 1 ENTER
 
 	// Spawn goals
 	GOAL_LOC_ID = SPAWN_LOC_ID;
-	while(GOAL_LOC_ID==SPAWN_LOC_ID) GOAL_LOC_ID = random(TARGET_ID_START, TARGET_ID_END);
-	if(IsTIDUsed(GOAL_TID)==FALSE) 
+	until(GOAL_LOC_ID!=SPAWN_LOC_ID)
 	{
-		while(Spawn("TallRedColumn", GetActorX(GOAL_LOC_ID), GetActorY(GOAL_LOC_ID), 20.0, GOAL_TID)==0);
-		goal_x = GetActorX(GOAL_LOC_ID);
-		goal_y = GetActorY(GOAL_LOC_ID);
-		goal_z = GetActorZ(GOAL_LOC_ID);
+		GOAL_LOC_ID = random(TARGET_ID_START, TARGET_ID_END);
+		Delay(1);
+	}
+	print(s: "Goal loc found");
+	if(IsTIDUsed(GOAL_TID)) Thing_Remove(GOAL_TID);
+
+	until(SpawnSpot("TallRedColumn", GOAL_LOC_ID, GOAL_TID)) Delay(1);
+	print(s: "Goal spawned");
+	goal_x = GetActorX(GOAL_LOC_ID);
+	goal_y = GetActorY(GOAL_LOC_ID);
+	goal_z = GetActorZ(GOAL_LOC_ID);
+
+	// Spawn rewards
+	int REWARD_LOC_ID = 0, REWARD_TID = 0;
+	for(REWARD_LOC_ID = TARGET_ID_START; REWARD_LOC_ID <= TARGET_ID_END; REWARD_LOC_ID++)
+	{
+		REWARD_TID = REWARD_LOC_ID + REWARD_ID_SHIFT;
+		if(	REWARD_LOC_ID != SPAWN_LOC_ID && 
+			REWARD_LOC_ID != GOAL_LOC_ID &&
+			random(0.0,1.0) < REWARD_CHANCE)
+		{
+			until(SpawnSpot("BlueTorch", REWARD_LOC_ID, REWARD_TID)) Delay(1);
+		}
 	}
 
 	// Wait
-	while(fdistance(0, GOAL_TID) > 64.0) Delay(1);
+	until(fdistance(0, GOAL_TID) < 64.0) 
+	{
+		for(REWARD_LOC_ID = TARGET_ID_START; REWARD_LOC_ID <= TARGET_ID_END; REWARD_LOC_ID++)
+		{
+			REWARD_TID = REWARD_LOC_ID + REWARD_ID_SHIFT;
 
+			if(IsTIDUsed(REWARD_TID) && fdistance(0, REWARD_TID) < 64.0)
+			{
+				Thing_Remove(REWARD_TID);
+				reward += 1.0;
+			}
+		}
+
+		Delay(1);
+	}
 	reward += 10.0;
+
+	// Clean up
+	for(REWARD_LOC_ID = TARGET_ID_START; REWARD_LOC_ID <= TARGET_ID_END; REWARD_LOC_ID++)
+	{
+		REWARD_TID = REWARD_LOC_ID + REWARD_ID_SHIFT;
+
+		if(IsTIDUsed(REWARD_TID))
+		{
+			Thing_Remove(REWARD_TID);
+		}
+	}
+
 	restart;
 }
