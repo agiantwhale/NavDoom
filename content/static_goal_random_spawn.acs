@@ -65,7 +65,7 @@ script 1 ENTER
 			REWARD_LOC_ID != GOAL_LOC_ID &&
 			random(0.0,1.0) < REWARD_CHANCE)
 		{
-			until(SpawnSpot("BlueTorch", REWARD_LOC_ID, REWARD_TID));
+			until(SpawnSpot("Column", REWARD_LOC_ID, REWARD_TID));
 		}
 	}
 
