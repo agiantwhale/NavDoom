@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import argparse
 import numpy as np
 import os
@@ -119,6 +121,8 @@ if __name__ == '__main__':
         else:
             counter = 0
             mazes.add(maze)
+
+    print('{} x {} -- {}'.format(FLAGS.columns, FLAGS.rows, len(mazes)))
 
     for idx, maze in enumerate(mazes):
         maze.write_to_file("{}_MAP{:02d}.txt".format(FLAGS.maze, idx + 1))
