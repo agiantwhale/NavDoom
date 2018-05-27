@@ -7,6 +7,7 @@ import os
 parser = argparse.ArgumentParser()
 parser.add_argument('maze')
 parser.add_argument('-n', '--num', type=int, default=10)
+parser.add_argument('-s', '--split', type=int, default=9)
 parser.add_argument('-r', '--rows', type=int, default=9)
 parser.add_argument('-c', '--columns', type=int, default=9)
 
@@ -96,11 +97,14 @@ class Maze:
                     neighbours.append((x, y + 2))
 
                 if len(neighbours):
-                    next_x, next_y = neighbours[np.random.random_integers(0, len(neighbours) - 1)]
+                    next_x, next_y = neighbours[np.random.random_integers(
+                        0,
+                        len(neighbours) - 1)]
 
                     if not maze.is_wall(next_x, next_y):
                         maze.set_wall(next_x, next_y)
-                        maze.set_wall(next_x + (x - next_x) // 2, next_y + (y - next_y) // 2)
+                        maze.set_wall(next_x + (x - next_x) // 2,
+                                      next_y + (y - next_y) // 2)
                         x, y = next_x, next_y
 
         return maze
@@ -111,18 +115,23 @@ if __name__ == '__main__':
 
     counter = 0
     mazes = set()
+
     while len(mazes) < FLAGS.num:
         if counter > 5:
             break
 
         maze = Maze.create_maze(FLAGS.columns + 1, FLAGS.rows + 1)
+
         if maze in mazes:
             counter += 1
         else:
             counter = 0
             mazes.add(maze)
 
-    print('{} x {} -- {}'.format(FLAGS.columns, FLAGS.rows, len(mazes)))
+    print('{} x {}, {} mazes generated'.format(FLAGS.columns, FLAGS.rows,
+                                               len(mazes)))
+
+    train_mazes = set(maze for maze in mazes if np.random.rand() > FLAGS.split)
 
     for idx, maze in enumerate(mazes):
         maze.write_to_file("{}_MAP{:02d}.txt".format(FLAGS.maze, idx + 1))

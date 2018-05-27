@@ -55,7 +55,8 @@ def build_wall(maze):
                 mask = 15
 
         # Flipped end and start vertices to make lines "point" at right direction (mostly to see if it works)
-        line_properties = [v_indexes[end], v_indexes[start], mask] + [0] * 6 + [left, right]
+        line_properties = [v_indexes[end], v_indexes[start], mask
+                           ] + [0] * 6 + [left, right]
         line = ZLinedef(*line_properties)
         linedefs.append(line)
 
@@ -66,8 +67,7 @@ def build_wall(maze):
             else:
                 pass
 
-    corners = [(0, 0), (max_w, 0),
-               (max_w, max_h), (0, max_h)]
+    corners = [(0, 0), (max_w, 0), (max_w, max_h), (0, max_h)]
     for v in corners:
         __add_vertex(*v)
 
@@ -113,8 +113,10 @@ def main(flags):
         new_map.vertexes = vertexes
         new_map.linedefs = linedefs
         new_map.sectors = [Sector(0, 128, 'CEIL5_2', 'CEIL5_2', 240, 0, 0)]
-        new_map.sidedefs = [Sidedef(0, 0, '-', '-', 'STONE2', 0),
-                            Sidedef(0, 0, '-', '-', '-', 0)]
+        new_map.sidedefs = [
+            Sidedef(0, 0, '-', '-', 'STONE2', 0),
+            Sidedef(0, 0, '-', '-', '-', 0)
+        ]
         new_wad.maps[map_name] = new_map.to_lumps()
 
     new_wad.to_file(flags.wad)
