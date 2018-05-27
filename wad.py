@@ -104,9 +104,8 @@ def build_wall(maze):
 def main(flags):
     new_wad = WAD()
 
-    for file_name in sorted(glob.glob('{}_*.txt'.format(flags.prefix))):
-        map_name = re.match('{}_(.*).txt'.format(flags.prefix), file_name)[1]
-
+    for map_index, file_name in enumerate(
+            glob.glob('{}_*.txt'.format(flags.prefix))):
         with open(file_name) as maze_source:
             maze = [line.strip() for line in maze_source.readlines()]
             maze = [line for line in maze if line]
@@ -125,7 +124,7 @@ def main(flags):
             Sidedef(0, 0, '-', '-', 'STONE2', 0),
             Sidedef(0, 0, '-', '-', '-', 0)
         ]
-        new_wad.maps[map_name] = new_map.to_lumps()
+        new_wad.maps['MAP{:02d}'.format(map_index)] = new_map.to_lumps()
 
     new_wad.to_file(flags.wad)
 
