@@ -7,7 +7,7 @@ import os
 parser = argparse.ArgumentParser()
 parser.add_argument('maze')
 parser.add_argument('-n', '--num', type=int, default=10)
-parser.add_argument('-s', '--split', type=int, default=9)
+parser.add_argument('-s', '--split', type=float, default=0.8)
 parser.add_argument('-r', '--rows', type=int, default=9)
 parser.add_argument('-c', '--columns', type=int, default=9)
 
@@ -128,10 +128,19 @@ if __name__ == '__main__':
             counter = 0
             mazes.add(maze)
 
+    train_indices = set(
+        np.random.choice(
+            range(len(mazes)),
+            size=int(len(mazes) * FLAGS.split),
+            replace=False))
+
     print('{} x {}, {} mazes generated'.format(FLAGS.columns, FLAGS.rows,
                                                len(mazes)))
-
-    train_mazes = set(maze for maze in mazes if np.random.rand() > FLAGS.split)
+    print('-- {} train mazes'.format(len(train_indices)))
+    print('-- {} test mazes'.format(len(mazes) - len(train_indices)))
 
     for idx, maze in enumerate(mazes):
-        maze.write_to_file("{}_MAP{:02d}.txt".format(FLAGS.maze, idx + 1))
+        prefix = 'TRAIN' if idx in train_indices else 'TEST'
+
+        maze.write_to_file("{}_{}_MAP{:02d}.txt".format(
+            FLAGS.maze, prefix, idx + 1))

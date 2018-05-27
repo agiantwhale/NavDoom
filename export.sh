@@ -6,17 +6,22 @@ mkdir -p outputs
 mkdir -p outputs/sources
 mkdir -p outputs/images
 
-NUM_MAZES=1000
+NUM_MAZES=2000
 
-if [[ ! -z "${ACC}" ]]; then
-	{
-		${ACC} ./content/static_goal_random_spawn.acs ./content/static_goal_random_spawn.o
-	} &> /dev/null
+ACC="./acc/acc"
+if [ ! -f $ACC ]; then
+	echo "File $ACC does not exist, compiling..."
+	make -C ./acc
 fi
+
+for FILE in content/*.acs; do
+	$ACC -i ./acc $FILE "outputs/$(basename ${FILE%.*}).o"
+done
 
 for SIZE in $(seq -s ' ' 7 2 11); do
 	PREFIX="./outputs/sources/$SIZE"
 	python maze.py $PREFIX -r $SIZE -c $SIZE -n $NUM_MAZES
-	python wad.py $PREFIX "outputs/$SIZE.wad" -b content/static_goal_random_spawn.o
+	python wad.py "${PREFIX}_TRAIN" "outputs/${SIZE}_TRAIN.wad" -b outputs/static_goal_train.o
+	python wad.py "${PREFIX}_TEST" "outputs/${SIZE}_TEST.wad" -b outputs/static_goal.o
 done
 echo "Success."

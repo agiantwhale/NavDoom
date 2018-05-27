@@ -1,0 +1,3 @@
+[submodule "acc"]
+	path = acc
+	url = https://github.com/rheit/acc.git

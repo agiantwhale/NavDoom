@@ -32,9 +32,10 @@ function int fdistance (int tid1, int tid2)
 
 script 1 ENTER
 {
-	if(TARGET_ID_END == TARGET_ID_START)
+	TARGET_ID_END = TARGET_ID_START;
+	while(IsTIDUsed(TARGET_ID_END + 1))
 	{
-		while(IsTIDUsed(TARGET_ID_END + 1)) TARGET_ID_END += 1;
+		TARGET_ID_END += 1;
 	}
 
 	// Spawn actor
@@ -45,25 +46,20 @@ script 1 ENTER
 
 	// Spawn goals
 	GOAL_LOC_ID = SPAWN_LOC_ID;
-	while(GOAL_LOC_ID==SPAWN_LOC_ID) GOAL_LOC_ID = random(TARGET_ID_START, TARGET_ID_END);
-	if(IsTIDUsed(GOAL_TID)==FALSE) 
-	{
-		while(Spawn("TallRedColumn", GetActorX(GOAL_LOC_ID), GetActorY(GOAL_LOC_ID), 20.0, GOAL_TID)==0);
-		goal_x = GetActorX(GOAL_LOC_ID);
-		goal_y = GetActorY(GOAL_LOC_ID);
-		goal_z = GetActorZ(GOAL_LOC_ID);
-	}
-	else
-	{
-		SetActorPosition(GOAL_TID, GetActorX(GOAL_LOC_ID), GetActorY(GOAL_LOC_ID), 0.0, 0);
-		goal_x = GetActorX(GOAL_LOC_ID);
-		goal_y = GetActorY(GOAL_LOC_ID);
-		goal_z = GetActorZ(GOAL_LOC_ID);
-	}
+	until(GOAL_LOC_ID!=SPAWN_LOC_ID) GOAL_LOC_ID = random(TARGET_ID_START, TARGET_ID_END);
+	if(IsTIDUsed(GOAL_TID)) Thing_Remove(GOAL_TID);
+
+	until(SpawnSpot("TallRedColumn", GOAL_LOC_ID, GOAL_TID));
+	goal_x = GetActorX(GOAL_LOC_ID);
+	goal_y = GetActorY(GOAL_LOC_ID);
+	goal_z = GetActorZ(GOAL_LOC_ID);
 
 	// Wait
-	while(fdistance(0, GOAL_TID) > 64.0) Delay(1);
-
+	until(fdistance(0, GOAL_TID) < 64.0) 
+	{
+		Delay(1);
+	}
 	reward += 10.0;
+
 	restart;
 }
