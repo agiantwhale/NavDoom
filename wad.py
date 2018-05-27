@@ -5,8 +5,16 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('prefix')
 parser.add_argument('wad')
-parser.add_argument('-b', '--behavior', default=False)
-parser.add_argument('-s', '--script', default=False)
+parser.add_argument(
+    '-b',
+    '--behavior',
+    default=False,
+    help='path to compiled lump containing map behavior (default: None)')
+parser.add_argument(
+    '-s',
+    '--script',
+    default=False,
+    help='path to script source lump containing map behavior (optional)')
 
 BLOCK_SIZE = 96
 

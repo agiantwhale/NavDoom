@@ -6,10 +6,26 @@ import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('maze')
-parser.add_argument('-n', '--num', type=int, default=10)
-parser.add_argument('-s', '--split', type=float, default=0.8)
-parser.add_argument('-r', '--rows', type=int, default=9)
-parser.add_argument('-c', '--columns', type=int, default=9)
+parser.add_argument(
+    '-n',
+    '--num',
+    type=int,
+    default=10,
+    help='number of maps to generate (default: 10)')
+parser.add_argument(
+    '-s',
+    '--split',
+    type=float,
+    default=0.8,
+    help='train/test split ratio (default: 0.8)')
+parser.add_argument(
+    '-r', '--rows', type=int, default=9, help='maps row size (default: 9)')
+parser.add_argument(
+    '-c',
+    '--columns',
+    type=int,
+    default=9,
+    help='maps column size (default: 9)')
 
 WALL_TYPE = np.int8
 WALL = 0
