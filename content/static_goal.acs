@@ -45,14 +45,14 @@ script 1 ENTER
 	SetActorVelocity(0, 0, 0, 0, FALSE, FALSE);
 
 	// Spawn goals
-	GOAL_LOC_ID = SPAWN_LOC_ID;
-	until(GOAL_LOC_ID!=SPAWN_LOC_ID) GOAL_LOC_ID = random(TARGET_ID_START, TARGET_ID_END);
-	if(IsTIDUsed(GOAL_TID)) Thing_Remove(GOAL_TID);
-
-	until(SpawnSpot("TallRedColumn", GOAL_LOC_ID, GOAL_TID));
-	goal_x = GetActorX(GOAL_LOC_ID);
-	goal_y = GetActorY(GOAL_LOC_ID);
-	goal_z = GetActorZ(GOAL_LOC_ID);
+	if(!IsTIDUsed(GOAL_TID)) {
+		GOAL_LOC_ID = SPAWN_LOC_ID;
+		until(GOAL_LOC_ID!=SPAWN_LOC_ID) GOAL_LOC_ID = random(TARGET_ID_START, TARGET_ID_END);
+		until(SpawnSpot("TallRedColumn", GOAL_LOC_ID, GOAL_TID));
+		goal_x = GetActorX(GOAL_LOC_ID);
+		goal_y = GetActorY(GOAL_LOC_ID);
+		goal_z = GetActorZ(GOAL_LOC_ID);
+	}
 
 	// Wait
 	until(fdistance(0, GOAL_TID) < 64.0) 
