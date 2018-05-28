@@ -10,13 +10,13 @@ parser.add_argument(
     '-n',
     '--num',
     type=int,
-    default=10,
+    default=200,
     help='number of maps to generate (default: 10)')
 parser.add_argument(
     '-s',
     '--split',
     type=float,
-    default=0.8,
+    default=0.5,
     help='train/test split ratio (default: 0.8)')
 parser.add_argument(
     '-r', '--rows', type=int, default=9, help='maps row size (default: 9)')

@@ -6,7 +6,7 @@ mkdir -p outputs
 mkdir -p outputs/sources
 mkdir -p outputs/images
 
-NUM_MAZES=2000
+NUM_MAZES=200
 
 ACC="./acc/acc"
 if [ ! -f $ACC ]; then
